@@ -6,6 +6,16 @@ from database.db import fetch_patient, patient_to_features, MODEL_COLUMNS
 st.set_page_config(page_title="What-If Analysis | AF DSS", page_icon="🔬", layout="wide")
 inject_css()
 
+# ── Sidebar navigation ─────────────────────────────────────────────────────
+st.sidebar.markdown("## 🫀 AF Risk DSS")
+st.sidebar.markdown("---")
+st.sidebar.page_link("app.py",                       label="🏠 Home")
+st.sidebar.page_link("pages/1_Risk_Assessment.py",   label="🔍 Risk Assessment")
+st.sidebar.page_link("pages/2_EDA.py",               label="📊 EDA")
+st.sidebar.page_link("pages/3_Model_Performance.py", label="📈 Model Performance")
+st.sidebar.page_link("pages/4_What_If.py",           label="🔬 What-If Analysis")
+st.sidebar.markdown("---")
+
 model, scaler, X_train, X_test, y_train, y_test = train_model()
 fill_values = get_fill_values()
 
