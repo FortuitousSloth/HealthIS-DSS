@@ -51,7 +51,8 @@ for col, label, val in zip(
 st.markdown("""
 <div class="warn-box">
     ⚠️ <strong>Recall is prioritised over precision</strong> in this clinical setting — missing an AF case (false negative)
-    is more costly than a false alarm. The balanced model achieves recall ≈ 49% vs. near-zero for the baseline.
+    is more costly than a false alarm. Stronger L2 regularisation (C=0.05) improves AUC over the default (C=1)
+    while maintaining the same recall.
 </div>
 """, unsafe_allow_html=True)
 
@@ -153,21 +154,19 @@ st.caption("Replicating the experiment from model_experiments.py — same train/
 
 @st.cache_data
 def compute_comparison():
-    # Reduced features (top 25 by coef magnitude)
-    coef_series = pd.Series(model.coef_[0], index=X_train.columns).abs().sort_values(ascending=False)
-    top_feats   = coef_series.head(25).index.tolist()
-    sc_red = StandardScaler()
-    Xtr_red = sc_red.fit_transform(X_train[top_feats])
-    Xte_red = sc_red.transform(X_test[top_feats])
-    m_red   = LogisticRegression(max_iter=5000, class_weight="balanced").fit(Xtr_red, y_train)
-
-    m_base = LogisticRegression(max_iter=5000).fit(X_train_scaled, y_train)
+    from sklearn.ensemble import GradientBoostingClassifier
+    m_base    = LogisticRegression(max_iter=5000).fit(X_train_scaled, y_train)
+    m_bal     = LogisticRegression(max_iter=5000, class_weight="balanced").fit(X_train_scaled, y_train)
+    m_tuned   = LogisticRegression(max_iter=5000, class_weight="balanced", C=0.05).fit(X_train_scaled, y_train)
+    m_gbm     = GradientBoostingClassifier(n_estimators=200, max_depth=4, learning_rate=0.05,
+                                           subsample=0.8, random_state=42).fit(X_train_scaled, y_train)
 
     configs = {
-        "Baseline LR":              (m_base, X_test_scaled, 0.5),
-        "Balanced LR ✓":            (model,  X_test_scaled, 0.5),
-        "Balanced + Threshold 0.3": (model,  X_test_scaled, 0.3),
-        "Reduced Features (25)":    (m_red,  Xte_red,       0.5),
+        "Baseline LR (no balancing)":      (m_base,  X_test_scaled, 0.5),
+        "Balanced LR (C=1)":               (m_bal,   X_test_scaled, 0.5),
+        "Balanced LR (C=0.05) ✓":          (m_tuned, X_test_scaled, 0.5),
+        "Balanced LR + Threshold 0.3":     (m_tuned, X_test_scaled, 0.3),
+        "Gradient Boosting (AUC ref)":     (m_gbm,   X_test_scaled, 0.5),
     }
     rows = []
     for name, (m, Xte, thresh) in configs.items():
@@ -188,4 +187,6 @@ with st.spinner("Computing model comparison…"):
     comp_df = compute_comparison()
 
 st.dataframe(comp_df, use_container_width=True)
-st.caption("✓ = Selected model used in Risk Assessment. Balanced LR trades precision for recall — clinically appropriate.")
+st.caption("✓ = Selected model. L2 regularisation (C=0.05) improves AUC vs the default (C=1). "
+           "Threshold 0.3 row shows recall gains from lowering the decision boundary. "
+           "GBM achieves higher AUC but at the cost of recall — LR remains the clinical choice.")

@@ -31,7 +31,7 @@ def train_model():
     from prep_data import X_train, X_test, y_train, y_test
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
-    model = LogisticRegression(max_iter=5000, class_weight="balanced")
+    model = LogisticRegression(max_iter=5000, class_weight="balanced", C=0.05)
     model.fit(X_train_scaled, y_train)
     return model, scaler, X_train, X_test, y_train, y_test
 

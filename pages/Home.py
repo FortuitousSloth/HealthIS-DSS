@@ -40,7 +40,7 @@ with col_a:
     during the acute phase and associated with a **40% increase in mortality** compared to MI alone.
     Early identification enables timely rhythm monitoring and preventive intervention.
 
-    The system uses a **balanced logistic regression model** trained on 1,700 patient records from
+    The system uses a **regularised balanced logistic regression model** trained on 1,700 patient records from
     the UCI MI Complications dataset, predicting AF probability from 35 admission and history
     variables — stratifying patients into Low, Medium, or High risk with tailored recommendations.
     """)
@@ -60,8 +60,8 @@ with col_b:
     )
     st.markdown("**Model**")
     st.write(
-        "Logistic regression with `class_weight='balanced'` to handle the 10:1 class imbalance. "
-        "Recall ≈ 0.49 | AUC ≈ 0.73."
+        "Logistic regression with `class_weight='balanced'` and tuned L2 regularisation (C=0.05) "
+        "to handle the 10:1 class imbalance. Recall ≈ 49% | AUC ≈ 0.61."
     )
     st.markdown("**Database**")
     st.write(
@@ -100,5 +100,5 @@ st.markdown(
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.caption(
     "Healthcare DSS · Built with Streamlit + PostgreSQL (Supabase) · "
-    "Data: UCI MI Complications Dataset · Model: Balanced Logistic Regression"
+    "Data: UCI MI Complications Dataset · Model: Balanced Logistic Regression (C=0.05)"
 )

@@ -137,7 +137,7 @@ if save_btn:
         "AF Probability":f"{prob:.1%}",
         "Risk Category": label,
     })
-    st.success(f"Saved "{scenario_name}"")
+    st.success(f"Saved: {scenario_name}")
 
 if st.session_state.get("scenarios"):
     scen_df = pd.DataFrame(st.session_state["scenarios"]).set_index("Name")
