@@ -11,7 +11,7 @@ inject_css()
 
 st.sidebar.markdown("## 🫀 AF Risk DSS")
 st.sidebar.markdown("---")
-if st.sidebar.button("🏠 Home",                 use_container_width=True): st.switch_page("app.py")
+st.sidebar.markdown("**🏠 Home** ← you are here")
 if st.sidebar.button("🔍 Risk Assessment",      use_container_width=True): st.switch_page("pages/1_Risk_Assessment.py")
 if st.sidebar.button("📊 EDA",                  use_container_width=True): st.switch_page("pages/2_EDA.py")
 if st.sidebar.button("📈 Model Performance",    use_container_width=True): st.switch_page("pages/3_Model_Performance.py")
