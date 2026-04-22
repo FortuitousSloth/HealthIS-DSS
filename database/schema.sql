@@ -3,12 +3,22 @@
 -- =========================================
 
 -- =========================
+-- 0. PROVIDERS
+-- =========================
+CREATE TABLE providers (
+    provider_id   SERIAL PRIMARY KEY,
+    full_name     TEXT NOT NULL,
+    specialty     TEXT NOT NULL DEFAULT 'Emergency Medicine'
+);
+
+-- =========================
 -- 1. PATIENTS (Demographics)
 -- =========================
 CREATE TABLE patients (
-    patient_id INTEGER PRIMARY KEY,
-    age INTEGER,
-    sex INTEGER
+    patient_id  INTEGER PRIMARY KEY,
+    age         INTEGER,
+    sex         INTEGER,
+    provider_id INTEGER REFERENCES providers(provider_id)
 );
 
 -- =========================
@@ -84,6 +94,18 @@ CREATE TABLE admission_vitals (
     patient_id INTEGER PRIMARY KEY REFERENCES patients(patient_id),
     s_ad_kbrig NUMERIC,
     d_ad_kbrig NUMERIC
+);
+
+-- =========================
+-- 9. CLINICAL CODES (LOINC / ICD-10-CM reference)
+-- =========================
+CREATE TABLE clinical_codes (
+    code_id          SERIAL PRIMARY KEY,
+    variable_name    TEXT NOT NULL,
+    table_name       TEXT NOT NULL,
+    code_system      TEXT NOT NULL,   -- 'LOINC' or 'ICD-10-CM'
+    code_value       TEXT NOT NULL,
+    code_description TEXT NOT NULL
 );
 
 -- =========================
