@@ -1,4 +1,6 @@
 import streamlit as st
+if not st.session_state.get("logged_in", False):
+    st.switch_page("app.py")
 import pandas as pd
 from utils import inject_css, train_model, get_fill_values, risk_category, make_gauge, AF_COLOR, NO_AF_COLOR
 from database.db import fetch_patient, patient_to_features, MODEL_COLUMNS

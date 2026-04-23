@@ -1,4 +1,6 @@
 import streamlit as st
+if not st.session_state.get("logged_in", False):
+    st.switch_page("app.py")
 import pandas as pd
 import numpy as np
 import plotly.express as px

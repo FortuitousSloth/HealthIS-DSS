@@ -1,4 +1,6 @@
 import streamlit as st
+if not st.session_state.get("logged_in", False):
+    st.switch_page("app.py")
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go

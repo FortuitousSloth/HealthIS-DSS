@@ -4,7 +4,7 @@ st.set_page_config(
     page_title="AF Risk DSS",
     page_icon="🫀",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ── Login gate ────────────────────────────────────────────────────────────────
@@ -14,6 +14,7 @@ def show_login():
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     #MainMenu, footer { visibility: hidden; }
+    section[data-testid="stSidebar"] { display: none !important; }
 
     .login-wrapper {
         display: flex;
@@ -66,7 +67,7 @@ def show_login():
             <div class="login-logo">🫀</div>
             <div class="login-title">AF Risk DSS</div>
             <div class="login-subtitle">Atrial Fibrillation Clinical Decision Support</div>
-            <div class="hipaa-badge">🔒 HIPAA-Compliant Access</div>
+            <div class="hipaa-badge">🔒</div>
         </div>
         """, unsafe_allow_html=True)
 

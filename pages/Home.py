@@ -1,4 +1,6 @@
 import streamlit as st
+if not st.session_state.get("logged_in", False):
+    st.switch_page("app.py")
 from utils import inject_css
 
 inject_css()
@@ -77,25 +79,41 @@ st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 st.markdown('<div class="section-title">Navigate the App</div>', unsafe_allow_html=True)
 
 pages = [
-    ("🔍", "Risk Assessment",    "Look up any patient by ID and get a real-time AF risk prediction with a probability gauge and clinical recommendation."),
-    ("📊", "EDA",                "Explore the dataset with interactive charts covering class distribution, demographics, vitals, and key risk factors."),
-    ("📈", "Model Performance",  "Review model results including a confusion matrix, ROC curve, precision-recall curve, and a comparison across model configurations."),
-    ("🔬", "What-If Analysis",   "Tweak a patient's clinical parameters and see how the AF risk score responds in real time."),
+    ("🔍", "Risk Assessment",   "Look up any patient by ID and get a real-time AF risk prediction with a probability gauge and clinical recommendation.", "pages/1_Risk_Assessment.py"),
+    ("📊", "EDA",               "Explore the dataset with interactive charts covering class distribution, demographics, vitals, and key risk factors.",    "pages/2_EDA.py"),
+    ("📈", "Model Performance", "Review model results including a confusion matrix, ROC curve, precision-recall curve, and a comparison across model configurations.", "pages/3_Model_Performance.py"),
+    ("🔬", "What-If Analysis",  "Tweak a patient's clinical parameters and see how the AF risk score responds in real time.",                             "pages/4_What_If.py"),
 ]
-cols = st.columns(4)
-for col, (icon, title, desc) in zip(cols, pages):
-    col.markdown(f"""
-    <div class="nav-card">
-        <h3>{icon} {title}</h3>
-        <p>{desc}</p>
-    </div>
-    """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown(
-    '<div class="info-box">👈 Use the <strong>sidebar</strong> on the left to navigate between pages.</div>',
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<style>
+div[data-testid="stPageLink"] a {
+    background: linear-gradient(135deg, #1E3A5F 0%, #2D5986 100%);
+    color: white !important;
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none !important;
+    display: block;
+    text-align: center;
+    margin-top: 0.8rem;
+    transition: opacity 0.15s ease;
+}
+div[data-testid="stPageLink"] a:hover { opacity: 0.85; }
+</style>
+""", unsafe_allow_html=True)
+
+cols = st.columns(4)
+for col, (icon, title, desc, path) in zip(cols, pages):
+    with col:
+        st.markdown(f"""
+        <div class="nav-card">
+            <h3>{icon} {title}</h3>
+            <p>{desc}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link(path, label=f"Open {title}", icon="→")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
