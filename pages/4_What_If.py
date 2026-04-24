@@ -102,16 +102,31 @@ with gauge_col:
 
     css_cls = {"Low Risk": "risk-low", "Medium Risk": "risk-med", "High Risk": "risk-high"}[label]
     recs = {
-        "Low Risk":    "Routine monitoring. Standard post-MI protocol.",
-        "Medium Risk": "Increased rhythm surveillance. Clinical review within 24h.",
-        "High Risk":   "Continuous monitoring. Early cardiology consultation.",
+        "Low Risk": (
+            "Telemetry 24–48 h · Daily 12-lead ECG · "
+            "Standard post-MI regimen (beta-blocker, ACE-I, statin) · "
+            "Maintain K⁺ &gt; 4.0 and Mg²⁺ &gt; 2.0 mEq/L"
+        ),
+        "Medium Risk": (
+            "Telemetry 48–72 h · ECG twice daily · Cardiology review within 24 h · "
+            "Echocardiogram (LV function, LA size) · "
+            "Proactive IV electrolyte repletion · "
+            "Beta-blocker unless contraindicated"
+        ),
+        "High Risk": (
+            "CCU telemetry · ECG every 6–8 h · Urgent cardiology consult · "
+            "Aggressive IV K⁺/Mg²⁺ repletion (target K⁺ &gt; 4.5) · "
+            "Consider prophylactic amiodarone · "
+            "Anticoagulation if AF develops (CHA₂DS₂-VASc) · "
+            "Ensure timely revascularization"
+        ),
     }
     st.markdown(f"""
-    <div class="risk-card {css_cls}">
-        <div class="risk-label">{icon} {label}</div>
-        <div class="risk-rec">{recs[label]}</div>
-    </div>
-    """, unsafe_allow_html=True)
+<div class="risk-card {css_cls}">
+<div class="risk-label">{icon} {label}</div>
+<div class="risk-rec">{recs[label]}</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Scenario comparison ───────────────────────────────────────────────────────
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)

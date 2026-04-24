@@ -3,7 +3,7 @@ if not st.session_state.get("logged_in", False):
     st.switch_page("app.py")
 import pandas as pd
 from utils import inject_css, train_model, get_fill_values, risk_category, make_gauge, THRESHOLD
-from database.db import fetch_patient, fetch_all_patient_ids, patient_to_features
+from database.db import fetch_patient, patient_to_features
 
 inject_css()
 # ── Sidebar ────────────────────────────────────────────────────────────────
@@ -13,14 +13,7 @@ fill_values = get_fill_values()
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 st.sidebar.header("Patient Selection")
-mode = st.sidebar.radio("Select by", ["Patient ID", "Browse list"])
-
-if mode == "Patient ID":
-    patient_id = st.sidebar.number_input("Enter Patient ID", min_value=1, step=1, value=1)
-else:
-    with st.spinner("Loading patient list…"):
-        all_ids = fetch_all_patient_ids()
-    patient_id = st.sidebar.selectbox("Choose a patient", all_ids)
+patient_id = st.sidebar.number_input("Enter Patient ID", min_value=1, step=1, value=1)
 
 assess = st.sidebar.button("Assess Risk", type="primary", use_container_width=True)
 
@@ -67,18 +60,35 @@ else:
         with r_col:
             css_cls = {"Low Risk": "risk-low", "Medium Risk": "risk-med", "High Risk": "risk-high"}[label]
             recs = {
-                "Low Risk":    "Routine cardiac monitoring. Standard post-MI management protocol.",
-                "Medium Risk": "Increased rhythm surveillance. Clinical review recommended within 24 hours.",
-                "High Risk":   "Continuous cardiac monitoring. Early cardiology consultation advised. Consider electrolyte management.",
+                "Low Risk": (
+                    "<strong>Monitoring:</strong> Continuous telemetry 24–48 h; daily 12-lead ECG.<br>"
+                    "<strong>Medications:</strong> Beta-blocker, ACE-I/ARB, aspirin, statin — standard post-MI regimen.<br>"
+                    "<strong>Electrolytes:</strong> Routine BMP on admission; maintain K⁺ &gt; 4.0 mEq/L and Mg²⁺ &gt; 2.0 mg/dL.<br>"
+                    "<strong>Follow-up:</strong> Standard cardiology review before discharge."
+                ),
+                "Medium Risk": (
+                    "<strong>Monitoring:</strong> Extended telemetry 48–72 h; 12-lead ECG twice daily.<br>"
+                    "<strong>Cardiology:</strong> Clinical review within 24 h; echocardiogram (LV function, left atrial size).<br>"
+                    "<strong>Electrolytes:</strong> Proactive IV repletion — target K⁺ &gt; 4.0 mEq/L and Mg²⁺ &gt; 2.0 mg/dL.<br>"
+                    "<strong>Medications:</strong> Ensure beta-blocker on board (reduces AF risk ~20–30%); prepare rate-control strategy.<br>"
+                    "<strong>If AF develops:</strong> Rate control (metoprolol or diltiazem); assess anticoagulation via CHA₂DS₂-VASc score."
+                ),
+                "High Risk": (
+                    "<strong>Monitoring:</strong> Continuous telemetry in CCU/step-down; 12-lead ECG every 6–8 h.<br>"
+                    "<strong>Cardiology:</strong> Urgent consultation; echocardiogram within 24 h.<br>"
+                    "<strong>Electrolytes:</strong> Aggressive IV repletion — target K⁺ &gt; 4.5 mEq/L and Mg²⁺ &gt; 2.0 mg/dL; avoid hypokalemia and hypomagnesemia.<br>"
+                    "<strong>Antiarrhythmics:</strong> Consider prophylactic amiodarone (IV load then oral 200 mg/day) per attending judgment.<br>"
+                    "<strong>Reperfusion:</strong> Ensure timely revascularization if not already done — reduces post-MI AF risk.<br>"
+                    "<strong>If AF develops:</strong> Rate or rhythm control; heparin bridge; long-term anticoagulation if CHA₂DS₂-VASc ≥ 2.<br>"
+                    "<strong>Avoid:</strong> Sympathomimetics, QT-prolonging agents, uncorrected electrolyte deficits."
+                ),
             }
             st.markdown(f"""
-            <div class="risk-card {css_cls}">
-                <div class="risk-label">{icon} {label}</div>
-                <div class="risk-rec">
-                    <strong>Clinical Recommendation:</strong><br>{recs[label]}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div class="risk-card {css_cls}">
+<div class="risk-label">{icon} {label}</div>
+<div class="risk-rec"><strong>Clinical Recommendations</strong><br><br>{recs[label]}</div>
+</div>
+""", unsafe_allow_html=True)
 
         with o_col:
             if actual is not None:

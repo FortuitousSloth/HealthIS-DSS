@@ -88,19 +88,25 @@ pages = [
 st.markdown("""
 <style>
 div[data-testid="stPageLink"] a {
-    background: linear-gradient(135deg, #1E3A5F 0%, #2D5986 100%);
-    color: white !important;
-    border-radius: 8px;
-    padding: 0.45rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 500;
+    background: #f0f4ff;
+    color: #1E3A5F !important;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 600;
     text-decoration: none !important;
     display: block;
     text-align: center;
     margin-top: 0.8rem;
-    transition: opacity 0.15s ease;
+    border: 1.5px solid #c7d4f0;
+    letter-spacing: 0.01em;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
-div[data-testid="stPageLink"] a:hover { opacity: 0.85; }
+div[data-testid="stPageLink"] a:hover {
+    background: #1E3A5F;
+    color: white !important;
+    border-color: #1E3A5F;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -113,7 +119,7 @@ for col, (icon, title, desc, path) in zip(cols, pages):
             <p>{desc}</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link(path, label=f"Open {title}", icon="→")
+        st.page_link(path, label=f"Open {title}")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)

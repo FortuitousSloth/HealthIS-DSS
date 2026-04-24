@@ -85,13 +85,16 @@ def fetch_patient(patient_id: int) -> Optional[dict]:
 
 def fetch_all_patient_ids() -> list:
     """Return sorted list of all patient_ids in the database."""
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT patient_id FROM patients ORDER BY patient_id")
-    ids = [r[0] for r in cur.fetchall()]
-    cur.close()
-    conn.close()
-    return ids
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT patient_id FROM patients ORDER BY patient_id")
+        ids = [r[0] for r in cur.fetchall()]
+        cur.close()
+        conn.close()
+        return ids
+    except Exception:
+        return []
 
 
 def patient_to_features(row: dict, fill_values: dict) -> pd.DataFrame:
