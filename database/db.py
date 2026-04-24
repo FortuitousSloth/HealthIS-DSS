@@ -10,7 +10,7 @@ import psycopg2
 import psycopg2.extras
 import pandas as pd
 
-# Load .env if present
+# Load .env if present (local dev)
 _env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
 if os.path.exists(_env_path):
     with open(_env_path) as f:
@@ -20,11 +20,22 @@ if os.path.exists(_env_path):
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k.strip(), v.strip())
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+def _get_database_url():
+    # Try Streamlit secrets first (Streamlit Cloud), then fall back to env var (local)
+    try:
+        import streamlit as st
+        url = st.secrets.get("DATABASE_URL")
+        if url:
+            return url
+    except Exception:
+        pass
+    return os.environ.get("DATABASE_URL")
+
+DATABASE_URL = _get_database_url()
 
 
 def get_connection():
-    return psycopg2.connect(DATABASE_URL)
+    return psycopg2.connect(DATABASE_URL, sslmode="require")
 
 
 # Columns the model expects, in exact order from prep_data.py
